@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import ru.itsjava.dao.UserDao;
 import ru.itsjava.domain.User;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService{
@@ -14,5 +16,10 @@ public class UserServiceImpl implements UserService{
     public void insert(User user) {
         long id = userDao.insert(user);
         System.out.println("ID нового пользователя = " + id);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userDao.findAll();
     }
 }

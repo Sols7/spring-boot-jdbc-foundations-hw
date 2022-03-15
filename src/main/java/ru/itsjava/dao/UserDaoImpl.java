@@ -12,6 +12,7 @@ import ru.itsjava.domain.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -50,16 +51,22 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User findById(long id) {
         Map<String, Object> params = Map.of("id", id);
-        return jdbc.queryForObject("select u.id, name, age, p.id, species from users u, pets p where u.id =:id " +
-                "and u.pet_id = p.id", params, new UsersMapper());
+        return jdbc.queryForObject("select u.id as UID, name, age, p.id as PID, species from users u, pets p " +
+                "where u.id =:id and u.pet_id = p.id", params, new UsersMapper());
+    }
+
+    @Override
+    public List<User> findAll() {
+        return jdbc.query("select u.id as UID, name, age, p.id as PID, species from users u, pets p " +
+                "where u.pet_id = p.id", new UsersMapper());
     }
 
     private static class UsersMapper implements RowMapper<User> {
 
         @Override
         public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new User(rs.getLong("id"), rs.getString("name"), rs.getInt("age"),
-                    new Pet(rs.getLong("id"), rs.getString("species")));
+            return new User(rs.getLong("UID"), rs.getString("name"), rs.getInt("age"),
+                    new Pet(rs.getLong("PID"), rs.getString("species")));
         }
     }
 }
